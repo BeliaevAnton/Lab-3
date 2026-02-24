@@ -1,59 +1,47 @@
 import tkinter as tk
-from tkinter import messagebox
-from sqrEq import sqrEquation
+import random
+import string
 
 
-def close():
-    window.destroy()
+weights = {}
+
+for i, letter in enumerate(string.ascii_uppercase):
+    weights[letter] = i + 1
+
+for i, digit in enumerate(string.digits):
+    weights[digit] = i + 27
+
+MIN_SUM = 30
+MAX_SUM = 35
 
 
-def calc():
-    A = float(arg_A.get())
-    B = float(arg_B.get())
-    C = float(arg_C.get())
-    if A == 0.0:
-        tk.messagebox.showwarning('Error', 'Division by zero!')
-    else:
-        lbl_result.configure(text=sqrEquation(A, B, C))
+def generate_block():
+    while True:
+        block = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        total = sum(weights[c] for c in block)
+        if MIN_SUM <= total <= MAX_SUM:
+            return block
 
 
-window = tk.Tk()
-window.geometry('576x360')
-bg_img = tk.PhotoImage(file='bg_pic.png')
-
-lbl_bg = tk.Label(window, image=bg_img)
-lbl_bg.place(x=0, y=0, relwidth=1, relheight=1)
-
-frame = tk.Frame(window)
-frame.place(relx=0.5, rely=0.5, anchor='center')
-
-lbl_A = tk.Label(frame, text='A', font=('Arial', 30), bg='blue', fg='white')
-lbl_A.grid(column=0, row=0, padx=10, pady=15)
-arg_A = tk.Entry(frame, width=10)
-arg_A.insert(0, '1')
-arg_A.grid(column=0, row=1, padx=10, pady=15)
-
-lbl_B = tk.Label(frame, text='B', font=('Arial', 30))
-lbl_B.grid(column=1, row=0, padx=10, pady=15)
-arg_B = tk.Entry(frame, width=10)
-arg_B.insert(0, '0')
-arg_B.grid(column=1, row=1, padx=10, pady=15)
-
-lbl_C = tk.Label(frame, text='C', font=('Arial', 30))
-lbl_C.grid(column=2, row=0, padx=10, pady=15)
-arg_C = tk.Entry(frame, width=10)
-arg_C.insert(0, '0')
-arg_C.grid(column=2, row=1, padx=10, pady=15)
-
-lbl_roots = tk.Label(frame, text='Result:')
-lbl_roots.grid(column=1, row=2)
-lbl_result = tk.Label(frame, text='None yet.', font=('Arial', 10))
-lbl_result.grid(column=2, row=2)
-
-btn_calc = tk.Button(frame, text='Calculate', command=calc)
-btn_calc.grid(column=0, row=3, padx=10, pady=15)
-btn_exit = tk.Button(frame, text='Cancel', command=close)
-btn_exit.grid(column=2, row=3, padx=10, pady=15)
+def generate_key():
+    return "-".join(generate_block() for _ in range(3))
 
 
-window.mainloop()
+
+def on_generate():
+    key = generate_key()
+    entry.delete(0, tk.END)
+    entry.insert(0, key)
+
+
+root = tk.Tk()
+root.title("KeyGen Variant 4")
+root.geometry("500x300")
+
+entry = tk.Entry(root, font=("Consolas", 20), justify="center")
+entry.pack(pady=40)
+
+button = tk.Button(root, text="Generate Key", command=on_generate)
+button.pack(pady=20)
+
+root.mainloop()
