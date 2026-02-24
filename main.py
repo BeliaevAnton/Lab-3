@@ -1,3 +1,14 @@
+import pygame
+import threading
+def play_music():
+    pygame.mixer.init()
+    pygame.mixer.music.load("music.mp3")
+    pygame.mixer.music.play(-1)  # бесконечно
+
+music_thread = threading.Thread(target=play_music)
+music_thread.daemon = True
+music_thread.start()
+
 import tkinter as tk
 import random
 import string
